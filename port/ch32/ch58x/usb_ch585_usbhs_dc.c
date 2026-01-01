@@ -417,8 +417,8 @@ static inline void usb_process_ep_in(uint8_t epid)
 
 static inline void usb_process_ep_out(uint8_t epid)
 {
-    EPn_SET_RX_NAK(epid);
     if (epid == 0) {
+        EPn_SET_RX_NAK(epid);
         if (CH585_USBHS_DEV->UEP0_RX_CTRL & USBHS_UEP_R_SETUP_IS) {
             CH585_USBHS_DEV->UEP0_RX_CTRL |= USBHS_UEP_R_TOG_DATA1;
             CH585_USBHS_DEV->UEP0_TX_CTRL |= USBHS_UEP_T_TOG_DATA1;
@@ -447,6 +447,7 @@ static inline void usb_process_ep_out(uint8_t epid)
         }
     } else {
         if (USB_GET_RX_CTRL(epid) & USBHS_UEP_R_TOG_MATCH) {
+            EPn_SET_RX_NAK(epid);
             uint32_t read_count = EPn_GET_RX_LEN(epid);
             usb_dc_cfg.ep_out[epid].xfer_buf += read_count;
             usb_dc_cfg.ep_out[epid].actual_xfer_len += read_count;
@@ -509,8 +510,10 @@ void USBD_IRQHandler(uint8_t busid)
     } else if (intflag & USBHS_UDIF_SUSPEND) {
         if (CH585_USBHS_DEV->MIS_ST & USBHS_UDMS_SUSPEND) {
             /* Suspend */
+            usbd_event_suspend_handler(0);
         } else {
             /* Wake up */
+            usbd_event_resume_handler(0);
         }
         CH585_USBHS_DEV->INT_FG = USBHS_UDIF_SUSPEND;
     } else {
