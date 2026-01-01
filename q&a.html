@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Q &amp; A &mdash; CherryUSB 1.4.2 documentation</title>
+  <title>Q &amp; A &mdash; CherryUSB 1.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=02f2166e"></script>
+      <script src="_static/documentation_options.js?v=73275c37"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -55,12 +55,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#cherryusb">CherryUSB 性能能到多少</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#st-ip">ST IP 命名问题</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gd-ip">GD IP 问题</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dwc2-has-less-endpoints-than-config-please-check">dwc2 has less endpoints than config, please check</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ep-addr-xxx-overflow">Ep addr XXX overflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#this-dwc2-version-does-not-support-dma-mode-so-stop-working">This dwc2 version does not support dma mode, so stop working</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#has-include">__has_include 报错</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#config-usb-hs">CONFIG_USB_HS 何时使用</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#failed-to-enable-port">Failed to enable port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usb-host-urb-12-14">移植 usb host 出现 urb  返回 -12/-14</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usb-err-nak">USB_ERR_NAK 说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usb-host-usb">USB host 连接 USB 网卡问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pc-com">PC 识别的 COM 口如何更改名称</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#connect-disconnect-event">connect 和 disconnect event 不触发</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="opensource.html">官方开源项目分享</a></li>
@@ -103,6 +107,7 @@
 <li class="toctree-l1"><a class="reference internal" href="demo/usbd_video.html">usbd_video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/usbd_winusb.html">usbd_winusb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/usbd_webusb.html">usbd_webusb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demo/usbd_adb.html">usbd_adb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/usbh_serial.html">usbh_serial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/usbh_hid.html">usbh_hid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="demo/usbh_msc.html">usbh_msc</a></li>
@@ -135,6 +140,10 @@
 <p class="caption" role="heading"><span class="caption-text">版本说明</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="version.html">版本说明</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">性能展示</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="show/index.html">性能展示</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">商业支持</span></p>
 <ul>
@@ -174,12 +183,13 @@
 - Github issue: <a class="reference external" href="https://github.com/cherry-embedded/CherryUSB/issues/new/choose">https://github.com/cherry-embedded/CherryUSB/issues/new/choose</a></p>
 <p>提问中请包含以下信息：</p>
 <ul class="simple">
+<li><p>使用的版本</p></li>
 <li><p>使用的板子，引脚，USB IP</p></li>
-<li><p>USB 中断，时钟，引脚，寄存器地址是否正确，截图</p></li>
+<li><p>是否配置 USB 中断，USB 时钟，USB 引脚，USB phy 配置，以及 USB 寄存器地址是否正确，截图</p></li>
 <li><p>是否能进 USB 中断</p></li>
 <li><p>芯片是否带有 cache功能，是否做了 no cache 处理，截图</p></li>
-<li><p>硬件是否正常，是否使用杜邦线连接，如果正常，请说明正常原因</p></li>
-<li><p>打开 CONFGI_USBDEV_SETUP_LOG_PRINT，并提供 log</p></li>
+<li><p>USB 电路是否画正确，是否使用杜邦线连接，是否直连，如果正常，请说明正常原因</p></li>
+<li><p>如果能进中断，配置 <strong>#define CONFIG_USB_DBG_LEVEL USB_DBG_LOG</strong> 并提供 log，仅限商业 IP, 其余 IP 禁止开启 log，否则无法枚举</p></li>
 <li><p>是否流片并销售</p></li>
 </ul>
 </section>
@@ -189,14 +199,7 @@
 </section>
 <section id="cherryusb">
 <h2>CherryUSB 性能能到多少<a class="headerlink" href="#cherryusb" title="Link to this heading"></a></h2>
-<p>可以达到硬件极限性能，当然需要硬件理论支持到这速度，CherryUSB 就支持到这速度,举例如下：</p>
-<ul class="simple">
-<li><p>HPM 系列(从机可以到 42MB/S, 主机 44MB/S, 已经达到硬件极限)</p></li>
-<li><p>BL 系列（从机 32MB/S, 主机 25MB/S, 已经达到硬件极限）</p></li>
-<li><p>STM32F4 全速（从机 900KB/S, 主机 1.12MB/S, 已经达到硬件极限）</p></li>
-</ul>
-<p>从机测速demo: cdc_acm_template.c 并且关闭 log，脚本使用 <cite>tools/test_srcipts/test_cdc_speed.py</cite>
-主机测速demo: usb_host.c 中 TEST_USBH_CDC_SPEED=1</p>
+<p>参考 <a class="reference internal" href="show/index.html#performace-show"><span class="std std-ref">性能展示</span></a></p>
 </section>
 <section id="st-ip">
 <h2>ST IP 命名问题<a class="headerlink" href="#st-ip" title="Link to this heading"></a></h2>
@@ -204,21 +207,12 @@
 </section>
 <section id="gd-ip">
 <h2>GD IP 问题<a class="headerlink" href="#gd-ip" title="Link to this heading"></a></h2>
-<p>GD IP 采用 DWC2，但是读取的硬件参数都是 0（我也不懂为什么不给人知道），因此需要用户自行知道硬件信息，以下列举 GD32F4 的信息：</p>
-<p>CONFIG_USBDEV_EP_NUM pa11/pa12 引脚必须为 4，PB14/PB15 引脚必须为 6，并删除 usb_dc_dwc2.c 中 while(1){}</p>
-<ul class="simple">
-<li><p>当 CONFIG_USBDEV_EP_NUM 为4 时，fifo_num 不得大于 320 字</p></li>
-<li><p>当 CONFIG_USBDEV_EP_NUM 为6 时，fifo_num 不得大于 1280 字</p></li>
-</ul>
+<p>GD IP 采用 DWC2，但是读取的硬件参数都是 0（我也不懂为什么不给人知道），因此需要用户自行知道硬件信息，从 1.5.0 开始由于需要读取硬件信息，因此无法直接使用。</p>
 <p>其次 GD 复位以后无法使用 EPDIS 功能关闭端点，需要用户删除 reset 中断中的以下代码：</p>
 <div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="n">USB_OTG_INEP</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">DIEPCTL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">USB_OTG_DIEPCTL_EPDIS</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">USB_OTG_DIEPCTL_SNAK</span><span class="p">);</span>
 <span class="n">USB_OTG_OUTEP</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">DOEPCTL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">USB_OTG_DOEPCTL_EPDIS</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">USB_OTG_DOEPCTL_SNAK</span><span class="p">);</span>
 </pre></div>
 </div>
-</section>
-<section id="dwc2-has-less-endpoints-than-config-please-check">
-<h2>dwc2 has less endpoints than config, please check<a class="headerlink" href="#dwc2-has-less-endpoints-than-config-please-check" title="Link to this heading"></a></h2>
-<p>该 IP 硬件上没有这么多端点，请修改 <cite>CONFIG_USBDEV_EP_NUM</cite></p>
 </section>
 <section id="ep-addr-xxx-overflow">
 <h2>Ep addr XXX overflow<a class="headerlink" href="#ep-addr-xxx-overflow" title="Link to this heading"></a></h2>
@@ -241,6 +235,28 @@
 <h2>Failed to enable port<a class="headerlink" href="#failed-to-enable-port" title="Link to this heading"></a></h2>
 <p>供电不足或者硬件 USB 电路问题</p>
 </section>
+<section id="usb-host-urb-12-14">
+<h2>移植 usb host 出现 urb  返回 -12/-14<a class="headerlink" href="#usb-host-urb-12-14" title="Link to this heading"></a></h2>
+<p>检查 phy 配置，cache 配置（如果有），电源供电（建议自供电）</p>
+</section>
+<section id="usb-err-nak">
+<h2>USB_ERR_NAK 说明<a class="headerlink" href="#usb-err-nak" title="Link to this heading"></a></h2>
+<p>USB_ERR_NAK 只存在于 DWC2 buffer dma 模式，DWC2 在 buffer dma模式下对于中断传输不支持硬件处理 NAK 中断，因此需要软件处理，导致 NAK 中断非常多，建议搭配定时器使用。
+DWC2 scatter/gather dma 模式下全部由硬件处理，但是不支持 split 传输。总结， <strong>半斤 IP</strong>。</p>
+</section>
+<section id="usb-host-usb">
+<h2>USB host 连接 USB 网卡问题<a class="headerlink" href="#usb-host-usb" title="Link to this heading"></a></h2>
+<p>表现为能识别网卡并且分配到 IP 地址，但是无法 ping 通，这是因为网卡自身需要开启自动拨号，通常需要使用 AT 口设置。具体为 EC20/ML307 等模块。</p>
+</section>
+<section id="pc-com">
+<h2>PC 识别的 COM 口如何更改名称<a class="headerlink" href="#pc-com" title="Link to this heading"></a></h2>
+<p>这是微软对 CDC ACM 的驱动问题，无法修改，如需修改，请联系微软并缴纳费用即可更改。</p>
+</section>
+<section id="connect-disconnect-event">
+<h2>connect 和 disconnect event 不触发<a class="headerlink" href="#connect-disconnect-event" title="Link to this heading"></a></h2>
+<p>当前仅 hpm 芯片支持 connect 和 disconnect 事件，其他芯片请使用 USB 检测 vbus 电路。DWC2 IP 支持，但是由于需要占用引脚，并且大多是log 口，
+然后不同使能的配置也不一样，因此不做支持。</p>
+</section>
 </section>
 
 
@@ -254,7 +270,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 ~ 2024, sakumisu.</p>
+    <p>&#169; Copyright 2022 ~ 2025, sakumisu.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

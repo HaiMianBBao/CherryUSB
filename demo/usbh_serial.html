@@ -6,21 +6,21 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>usbh_serial &mdash; CherryUSB 1.4.2 documentation</title>
+  <title>usbh_serial &mdash; CherryUSB 1.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=02f2166e"></script>
+      <script src="../_static/documentation_options.js?v=73275c37"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="usbh_hid" href="usbh_hid.html" />
-    <link rel="prev" title="usbd_webusb" href="usbd_webusb.html" /> 
+    <link rel="prev" title="usbd_adb" href="usbd_adb.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -90,6 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usbd_video.html">usbd_video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usbd_winusb.html">usbd_winusb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usbd_webusb.html">usbd_webusb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usbd_adb.html">usbd_adb</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">usbh_serial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usbh_hid.html">usbh_hid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usbh_msc.html">usbh_msc</a></li>
@@ -123,6 +124,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../version.html">版本说明</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">性能展示</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../show/index.html">性能展示</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">商业支持</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../support/index.html">商业支持</a></li>
@@ -154,20 +159,21 @@
              
   <section id="usbh-serial">
 <h1>usbh_serial<a class="headerlink" href="#usbh-serial" title="Link to this heading"></a></h1>
+<p>当前仅支持 rt-thread device 框架，包括 cdc acm, ftdi, cp210x, ch34x, pl2303, 具体使用方式参考 rt-thread device api 即可。</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="usbd_webusb.html" class="btn btn-neutral float-left" title="usbd_webusb" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="usbd_adb.html" class="btn btn-neutral float-left" title="usbd_adb" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="usbh_hid.html" class="btn btn-neutral float-right" title="usbh_hid" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 ~ 2024, sakumisu.</p>
+    <p>&#169; Copyright 2022 ~ 2025, sakumisu.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

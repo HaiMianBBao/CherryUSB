@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>usbh_hid &mdash; CherryUSB 1.4.2 documentation</title>
+  <title>usbh_hid &mdash; CherryUSB 1.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=02f2166e"></script>
+      <script src="../_static/documentation_options.js?v=73275c37"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -90,6 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usbd_video.html">usbd_video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usbd_winusb.html">usbd_winusb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usbd_webusb.html">usbd_webusb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usbd_adb.html">usbd_adb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usbh_serial.html">usbh_serial</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">usbh_hid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usbh_msc.html">usbh_msc</a></li>
@@ -122,6 +123,10 @@
 <p class="caption" role="heading"><span class="caption-text">版本说明</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../version.html">版本说明</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">性能展示</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../show/index.html">性能展示</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">商业支持</span></p>
 <ul>
@@ -197,8 +202,12 @@
 <li><p>HID 使用的是中断传输，因此正常来说，我们需要根据 <strong>bInterval</strong> 来设置定时器，定时触发中断传输，demo 这里没有使用，如果对时间有精确要求，可以选择使用定时器来触发异步发送。</p></li>
 <li><p>以 hub 通信为例，采用的是一次性定时器，也可以使用周期性定时器。</p></li>
 </ul>
-<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="n">hub</span><span class="o">-&gt;</span><span class="n">int_timer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">usb_osal_timer_create</span><span class="p">(</span><span class="s">&quot;hubint_tim&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">USBH_GET_URB_INTERVAL</span><span class="p">(</span><span class="n">hub</span><span class="o">-&gt;</span><span class="n">intin</span><span class="o">-&gt;</span><span class="n">bInterval</span><span class="p">,</span><span class="w"> </span><span class="n">hport</span><span class="o">-&gt;</span><span class="n">speed</span><span class="p">),</span><span class="w"> </span><span class="n">hub_int_timeout</span><span class="p">,</span><span class="w"> </span><span class="n">hub</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="n">hub</span><span class="o">-&gt;</span><span class="n">int_timer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">usb_osal_timer_create</span><span class="p">(</span><span class="s">&quot;hubint_tim&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">USBH_GET_URB_INTERVAL</span><span class="p">(</span><span class="n">hub</span><span class="o">-&gt;</span><span class="n">intin</span><span class="o">-&gt;</span><span class="n">bInterval</span><span class="p">,</span><span class="w"> </span><span class="n">hport</span><span class="o">-&gt;</span><span class="n">speed</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="n">hub_int_timeout</span><span class="p">,</span><span class="w"> </span><span class="n">hub</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>这里的 <cite>USBH_GET_URB_INTERVAL</cite> 是一个宏定义，用于根据 binterval 计算 URB 的传输间隔时间, 单位是 us，而定时器最低是 ms ，因此需要除以 1000。对于小于等于 1ms 的不需要使用定时器。</p>
 </div>
 </section>
 
@@ -213,7 +222,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 ~ 2024, sakumisu.</p>
+    <p>&#169; Copyright 2022 ~ 2025, sakumisu.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

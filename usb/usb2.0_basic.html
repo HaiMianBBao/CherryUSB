@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>USB 基本概念(2.0 为主) &mdash; CherryUSB 1.4.2 documentation</title>
+  <title>USB 基本概念(2.0 为主) &mdash; CherryUSB 1.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=02f2166e"></script>
+      <script src="../_static/documentation_options.js?v=73275c37"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -135,6 +135,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbd_video.html">usbd_video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbd_winusb.html">usbd_winusb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbd_webusb.html">usbd_webusb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demo/usbd_adb.html">usbd_adb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbh_serial.html">usbh_serial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbh_hid.html">usbh_hid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbh_msc.html">usbh_msc</a></li>
@@ -167,6 +168,10 @@
 <p class="caption" role="heading"><span class="caption-text">版本说明</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../version.html">版本说明</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">性能展示</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../show/index.html">性能展示</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">商业支持</span></p>
 <ul>
@@ -342,6 +347,13 @@ USB 对这个问题的解决办法，就是强制插 0，也就是（位填充�
 </figure>
 <p>在数据被NRZI编码之前，在数据流中每六个连续的1之后插入一个0，以强制NRZI数据流中的过渡，这使接收器逻辑至少每七位有一次数据转换，以保证数据和时钟的锁定。比特填充是从同步模式开始启用。结束同步模式的数据 “一 “被算作是序列中的第一个 “一”。序列中的第一个。除了高速EOP期间，发射器的位填充总是被强制执行。如果需要按照
 位填充规则的要求，零位将被插入，即使它是数据包结束（EOP）信号前的最后一位。接收器必须对NRZI数据进行解码，识别填充位，并将其丢弃。</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>以下内容可以用一张图概括，了解即可，没有必要死记硬背</p>
+</div>
+<figure class="align-default">
+<img alt="../_images/usbstruct.png" src="../_images/usbstruct.png" />
+</figure>
 </section>
 </section>
 <section id="id7">
@@ -512,7 +524,7 @@ USB 对这个问题的解决办法，就是强制插 0，也就是（位填充�
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 ~ 2024, sakumisu.</p>
+    <p>&#169; Copyright 2022 ~ 2025, sakumisu.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

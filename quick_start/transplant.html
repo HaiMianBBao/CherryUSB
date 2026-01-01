@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>芯片通用移植指南 &mdash; CherryUSB 1.4.2 documentation</title>
+  <title>芯片通用移植指南 &mdash; CherryUSB 1.5.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=02f2166e"></script>
+      <script src="../_static/documentation_options.js?v=73275c37"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -49,7 +49,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">芯片通用移植指南</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#usb-device">USB Device 移植要点</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#usb-host">USB Host 移植要点</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cache">带 cache 功能的芯片使用注意</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usbh-link-script">主机链接脚本修改</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cache">cache 配置修改</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="rtthread.html">基于 RT-Thread 软件包开发指南</a></li>
@@ -95,6 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbd_video.html">usbd_video</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbd_winusb.html">usbd_winusb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbd_webusb.html">usbd_webusb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demo/usbd_adb.html">usbd_adb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbh_serial.html">usbh_serial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbh_hid.html">usbh_hid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbh_msc.html">usbh_msc</a></li>
@@ -127,6 +129,10 @@
 <p class="caption" role="heading"><span class="caption-text">版本说明</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../version.html">版本说明</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">性能展示</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../show/index.html">性能展示</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">商业支持</span></p>
 <ul>
@@ -163,24 +169,33 @@
 <section id="usb-device">
 <h2>USB Device 移植要点<a class="headerlink" href="#usb-device" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>拷贝 CherryUSB 源码到工程目录下，并按需添加源文件和头文件路径，其中 <cite>usbd_core.c</cite> 和 <cite>usb_dc_xxx.c</cite> 为必须添加项。而 <cite>usb_dc_xxx.c</cite> 是芯片所对应的 USB IP dcd 部分驱动，如果不知道自己芯片属于那个 USB IP，参考 <strong>port</strong> 目录下的不同 USB IP 的 readme。如果使用的 USB IP 没有支持，只能自己实现了</p></li>
+<li><p>拷贝 CherryUSB 源码到工程目录下，并按需添加源文件和头文件路径，头文件路径建议全部添加。其中 <cite>usbd_core.c</cite> 和 <cite>usb_dc_xxx.c</cite> 为必须添加项。而 <cite>usb_dc_xxx.c</cite> 是芯片所对应的 USB IP dcd 部分驱动，如果不知道自己芯片属于那个 USB IP，参考 <strong>port</strong> 目录下的不同 USB IP 的 readme。如果使用的 USB IP 没有支持，只能自己实现了</p></li>
 <li><p>拷贝 <cite>cherryusb_config_template.h</cite> 文件到自己工程目录下，命名为 <cite>usb_config.h</cite>，并添加相应的目录头文件路径</p></li>
 <li><p>实现 <cite>usb_dc_low_level_init</cite> 函数（该函数主要负责 USB 时钟、引脚、中断的初始化）。该函数可以放在你想要放的任何参与编译的 c 文件中。如何进行 USB 的时钟、引脚、中断等初始化，请自行根据你使用的芯片原厂提供的源码中进行添加。</p></li>
-<li><p>描述符的注册、class的注册、接口的注册、端点中断的注册。不会的参考 demo 下的 template</p></li>
-<li><p>调用 <cite>usbd_initialize</cite> 并填入 <cite>busid</cite> 和 USB IP 的 <cite>reg base</cite>， <cite>busid</cite> 从 0 开始，不能超过 <cite>CONFIG_USBDEV_MAX_BUS</cite></p></li>
 <li><p>在中断函数中调用 <cite>USBD_IRQHandler</cite>，并传入 <cite>busid</cite>, 如果你的 SDK 中中断入口已经存在 <cite>USBD_IRQHandler</cite> ，请更改 USB 协议栈中的名称</p></li>
-<li><p>编译使用。各个 class 如何使用，参考 demo 下的 template</p></li>
+<li><p>如果芯片带 cache，cache 修改参考 <a class="reference internal" href="#usb-cache"><span class="std std-ref">cache 配置修改</span></a> 章节</p></li>
+<li><p>注册描述符并调用 <cite>usbd_initialize</cite>，填入 <cite>busid</cite> 和 USB IP 的 <cite>reg base</cite>， <cite>busid</cite> 从 0 开始，不能超过 <cite>CONFIG_USBDEV_MAX_BUS</cite>，可以直接使用 demo 下的 template</p></li>
 </ul>
 </section>
 <section id="usb-host">
 <h2>USB Host 移植要点<a class="headerlink" href="#usb-host" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>拷贝 CherryUSB 源码到工程目录下，并按需添加源文件和头文件路径，其中 <cite>usbh_core.c</cite> 、 <cite>usb_hc_xxx.c</cite> 以及 <strong>osal</strong> 目录下源文件（根据不同的 os 选择对应的源文件）为必须添加项。而 <cite>usb_hc_xxx.c</cite> 是芯片所对应的 USB IP hcd 部分驱动，如果不知道自己芯片属于那个 USB IP，参考 <strong>port</strong> 目录下的不同 USB IP 的 readme。如果使用的 USB IP 没有支持，只能自己实现了</p></li>
+<li><p>拷贝 CherryUSB 源码到工程目录下，并按需添加源文件和头文件路径，头文件路径建议全部添加。其中 <cite>usbh_core.c</cite> 、 <cite>usb_hc_xxx.c</cite> 以及 <strong>osal</strong> 目录下源文件（根据不同的 os 选择对应的源文件）为必须添加项。而 <cite>usb_hc_xxx.c</cite> 是芯片所对应的 USB IP hcd 部分驱动，如果不知道自己芯片属于那个 USB IP，参考 <strong>port</strong> 目录下的不同 USB IP 的 readme。如果使用的 USB IP 没有支持，只能自己实现了</p></li>
 <li><p>拷贝 <cite>cherryusb_config_template.h</cite> 文件到自己工程目录下，命名为 <cite>usb_config.h</cite>，并添加相应的目录头文件路径</p></li>
 <li><p>实现 <cite>usb_hc_low_level_init</cite> 函数（该函数主要负责 USB 时钟、引脚、中断的初始化）。该函数可以放在你想要放的任何参与编译的 c 文件中。如何进行 USB 的时钟、引脚、中断等初始化，请自行根据你使用的芯片原厂提供的源码中进行添加。</p></li>
 <li><p>调用 <cite>usbh_initialize</cite> 并填入 <cite>busid</cite> 和 USB IP 的 <cite>reg base</cite>， <cite>busid</cite> 从 0 开始，不能超过 <cite>CONFIG_USBHOST_MAX_BUS</cite></p></li>
 <li><p>在中断函数中调用 <cite>USBH_IRQHandler</cite>，并传入 <cite>busid</cite>, 如果你的 SDK 中中断入口已经存在 <cite>USBH_IRQHandler</cite> ，请更改 USB 协议栈中的名称</p></li>
-<li><p>如果使用的是 GCC ，需要在链接脚本中添加如下代码（需要放在 flash 位置）：</p></li>
+<li><p>链接脚本修改参考 <a class="reference internal" href="#usbh-link-script"><span class="std std-ref">主机链接脚本修改</span></a> 章节</p></li>
+<li><p>如果芯片带 cache，cache 修改参考 <a class="reference internal" href="#usb-cache"><span class="std std-ref">cache 配置修改</span></a> 章节</p></li>
+<li><p>调用 <cite>usbh_initialize</cite> ，填入 <cite>busid</cite> 和 USB IP 的 <cite>reg base</cite>， <cite>busid</cite> 从 0 开始，不能超过 <cite>CONFIG_USBHOST_MAX_BUS</cite> 。基础的 cdc + hid + msc 参考 <cite>usb_host.c</cite> 文件，其余参考 <strong>platform</strong> 目录下适配</p></li>
+</ul>
+</section>
+<section id="usbh-link-script">
+<span id="id2"></span><h2>主机链接脚本修改<a class="headerlink" href="#usbh-link-script" title="Link to this heading"></a></h2>
+<p>在使用主机时，如果没有修改链接脚本，会报 <cite>__usbh_class_info_start__</cite> 和 <cite>__usbh_class_info_end__</cite> 未定义的错误。因为主机协议栈需要在链接脚本中添加一个 section 来存储 class 信息。</p>
+<ul class="simple">
+<li><p>如果使用的是 KEIL 无需修改</p></li>
+<li><p>如果使用的是 GCC ，需要在链接脚本中添加如下代码（需要放在 flash 位置，建议放最后）：</p></li>
 </ul>
 <div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="c1">// 在 ld 文件中添加如下代码</span>
 <span class="p">.</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
@@ -223,14 +238,16 @@
 <span class="n">keep</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">section</span><span class="w"> </span><span class="p">.</span><span class="n">usbh_class_info</span><span class="p">};</span>
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>编译使用。各个 class 如何使用，参考 demo 下的 <cite>usb_host.c</cite> 文件</p></li>
-</ul>
 </section>
 <section id="cache">
-<h2>带 cache 功能的芯片使用注意<a class="headerlink" href="#cache" title="Link to this heading"></a></h2>
-<p>协议栈以及 port 中不会对 cache 区域的 ram 进行 clean 或者 invalid，所以需要使用一块非 cache 区域的 ram 来维护。 <cite>USB_NOCACHE_RAM_SECTION</cite> 宏表示将变量指定到非 cache ram上，
-因此，用户需要在对应的链接脚本中添加 no cache ram 的 section。默认 <cite>USB_NOCACHE_RAM_SECTION</cite> 定义为  <cite>__attribute__((section(“.noncacheable”)))</cite>。</p>
+<span id="usb-cache"></span><h2>cache 配置修改<a class="headerlink" href="#cache" title="Link to this heading"></a></h2>
+<p>对于带 cache 的芯片，协议栈以及 port 中不会对 cache 区域的 ram 进行 clean 或者 invalid，所以需要使用一块非 cache 区域的 ram 来维护。
+<cite>USB_NOCACHE_RAM_SECTION</cite> 宏表示将变量指定到非 cache ram上，默认 <cite>USB_NOCACHE_RAM_SECTION</cite> 定义为  <cite>__attribute__((section(“.noncacheable”)))</cite>。
+因此，用户需要在对应的链接脚本中添加 no cache ram 的 section，并且 section 段包含 <cite>.noncacheable</cite>。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>需要注意，光修改链接脚本中的 nocache section 是不够的，还需要配置该 section 中的 ram 是真的 nocache，一般需要配置 mpu 属性（arm 的参考 stm32h7 demo）。</p>
+</div>
 <p>GCC:</p>
 <div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="n">MEMORY</span>
 <span class="p">{</span>
@@ -282,7 +299,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022 ~ 2024, sakumisu.</p>
+    <p>&#169; Copyright 2022 ~ 2025, sakumisu.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
