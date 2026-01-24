@@ -9,9 +9,23 @@
 #include "rtthread.h"
 #include "cybsp.h"
 
+#if defined (COMPONENT_CM55)
+
+#if defined(CONFIG_USB_DWC2_DMA_ENABLE) && !defined(CONFIG_USB_DCACHE_ENABLE)
+#error "Please enable CONFIG_USB_DCACHE_ENABLE and put USB_NOCACHE_RAM_SECTION to section ".cy_socmem_data" when using DMA"
+#endif
+
+#else
+#define CONFIG_USB_DWC2_DMA_ENABLE
+#endif
+
 const struct dwc2_user_params param_common = {
     .phy_type = DWC2_PHY_TYPE_PARAM_UTMI,
+#ifdef CONFIG_USB_DWC2_DMA_ENABLE
     .device_dma_enable = true,
+#else
+    .device_dma_enable = false,
+#endif
     .device_dma_desc_enable = false,
     .device_rx_fifo_size = 0x21F,
     .device_tx_fifo_size = {
