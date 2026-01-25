@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>USB 知识点拓展 &mdash; CherryUSB 1.5.2 documentation</title>
+  <title>USB 知识点拓展 &mdash; CherryUSB 1.5.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=73275c37"></script>
+      <script src="../_static/documentation_options.js?v=d75fd82e"></script>
       <script src="../_static/doctools.js?v=9a2dae69"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -48,10 +48,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../quick_start/demo.html">基于现有 demo 快速验证</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../quick_start/transplant.html">芯片通用移植指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../quick_start/rtthread.html">基于 RT-Thread 软件包开发指南</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../quick_start/esp.html">基于 ESP-Registry 开发指南</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../q%26a.html">Q &amp; A</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../opensource.html">官方开源项目分享</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../share.html">开发者经验/开源项目分享</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start/q%26a.html">Q &amp; A</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start/share.html">开发者经验/开源项目分享</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start/opensource.html">官方开源项目分享</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">USB 基本知识点</span></p>
 <ul class="current">
@@ -105,6 +104,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbh_wifi.html">usbh_wifi</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbd_vendor.html">vendor device 驱动编写</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../demo/usbh_vendor.html">vendor host 驱动编写</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../demo/usb_otg.html">OTG 功能的使用</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">USBIP 介绍</span></p>
 <ul>
@@ -188,13 +188,17 @@
 <section id="id3">
 <h2>什么时候算中断完成<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
 <p>从机接收：接收的长度与设置的长度相等；接收的最后一个包为短包。
-从机发送：发送的长度与设置的长度相等，如果发送的长度是 EP MPS 的整数倍，需要再发送一个 ZLP（仅限 control 和 bulk 传输）。</p>
-<p>主机接收：同从机接收
-主机发送：发送的长度与设置的长度相等</p>
+从机发送：发送的长度与设置的长度相等，如果发送的长度是 EP MPS 的整数倍， <strong>通常</strong> 需要再发送一个 ZLP（仅限 control 和 bulk 传输）。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>对于从机接收，并且是 bulk 传输，接收长度通常设计为 EP MPS，以下三种情况可以修改为多个 EP MPS: 固定长度；自定义协议并携带长度（例如 MSC）; 主机手动发送 ZLP 或者短包（例如 RNDIS）</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>对于从机发送，并且是 bulk 传输，发送长度没有限制，但是如果是 EP MPS 整数倍，通常需要发送 ZLP。自定义协议则不需要发送 ZLP，例如 MSC。</p>
+</div>
+<p>主机接收：同从机接收
+主机发送：发送的长度与设置的长度相等</p>
 </section>
 </section>
 

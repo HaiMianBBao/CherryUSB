@@ -29,6 +29,21 @@
 - esp32p4：一个 USB2.0 内置全速 PHY 芯片，一个 USB2.0 内置高速 PHY 芯片，支持主从机。
 - 默认 demo 采用组件库安装的形式，在 https://components.espressif.com/ 中搜索 cherryusb 即可
 
+ESP-Registry 可以参考官方文档，推荐使用 vscode + esp-idf 的开发环境。
+
+- ctrl + shift + p 选择 ESP-IDF 欢迎界面，然后选择 Component mananger
+
+.. figure:: img/esp1.png
+
+- 找到 cherryusb 并安装
+
+.. figure:: img/esp2.png
+
+- 打开 menuconfig，并打开 cherryusb 的配置，根据实际情况选择主机或者从机模式
+
+.. figure:: img/esp3.png
+.. figure:: img/esp4.png
+
 基于飞腾派系列芯片（官方 SDK 支持）
 -----------------------------------
 
@@ -150,21 +165,6 @@ USB Device 移植要点
 
 .. figure:: img/stm32_8.png
 
-- 如果使用 dwc2 ip，需要增加 **dwc2/usb_glue_st.c** 文件，并在 `usb_config.h` 中实现以下宏：
-
-.. code-block:: C
-
-    // 以下细节如有出入，请对照 stm32xxx.h 文件修改
-    // 需要根据硬件实际的 fifo 深度进行修改，默认是最基础的配置
-    #define CONFIG_USBDEV_EP_NUM 6
-    #define CONFIG_USB_DWC2_RXALL_FIFO_SIZE (1012 - 16 * 6)
-    #define CONFIG_USB_DWC2_TX0_FIFO_SIZE (64 / 4)
-    #define CONFIG_USB_DWC2_TX1_FIFO_SIZE (64 / 4)
-    #define CONFIG_USB_DWC2_TX2_FIFO_SIZE (64 / 4)
-    #define CONFIG_USB_DWC2_TX3_FIFO_SIZE (64 / 4)
-    #define CONFIG_USB_DWC2_TX4_FIFO_SIZE (64 / 4)
-    #define CONFIG_USB_DWC2_TX5_FIFO_SIZE (64 / 4)
-
 - 如果使用 fsdev ip，（V1.5.0 开始需要增加 **fsdev/usb_glue_st.c**） 在 `usb_config.h` 中实现以下宏,具体数值不同芯片不一样：
 
 .. code-block:: C
@@ -218,7 +218,7 @@ USB Host 移植要点
 
 - 链接脚本修改参考 :ref:`usbh_link_script` 章节
 - 如果芯片带 cache，cache 修改参考 :ref:`usb_cache` 章节
-- 调用 `usbh_initialize` 并填入 `busid` 和 USB IP 的 `reg base`， `busid` 从 0 开始，不能超过 `CONFIG_USBHOST_MAX_BUS`
+- 调用 `usbh_initialize` 并填入 `busid` 和 USB IP 的 `reg base` 还有 `event_handler` 可缺省为NULL， `busid` 从 0 开始，不能超过 `CONFIG_USBHOST_MAX_BUS`
 - 启动线程
 
 .. figure:: img/stm32_18.png
